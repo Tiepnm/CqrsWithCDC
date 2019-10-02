@@ -1,0 +1,72 @@
+version: '2'
+services:
+#  bank-app:
+#    build: .
+#    ports:
+#      - "8085-8087:8080"
+#    links:
+#      - mysql
+#      - kafka
+  zookeeper:
+    image: debezium/zookeeper:0.8
+    ports:
+     - 2181:2181
+     - 2888:2888
+     - 3888:3888
+
+  kafka:
+    user: root
+    image: debezium/kafka:0.8
+    ports:
+     - 9092:9092
+     - 9094:9094
+
+    links:
+     - zookeeper
+    environment:
+     - ZOOKEEPER_CONNECT=zookeeper:2181
+     - ADVERTISED_LISTENERS=INSIDE://:9092,OUTSIDE://localhost:9094
+     - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+     - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
+     - LISTENERS=INSIDE://:9092,OUTSIDE://:9094
+     - BROKER_ID=1
+     - LOG_DIRS=/kafka/kafka-logs-1
+
+  mysql:
+    image: debezium/example-mysql:0.8
+    ports:
+     - 3307:3306
+    environment:
+     - MYSQL_ROOT_PASSWORD=debezium
+     - MYSQL_USER=mysqluser
+     - MYSQL_PASSWORD=mysqlpw
+  connect:
+    image: debezium/connect-jdbc-es:0.8
+    build:
+      context: debezium-jdbc
+    ports:
+     - 8083:8083
+     - 5005:5005
+    links:
+     - kafka
+     - mysql
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=my_connect_configs_1
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets_1
+#  druid:
+#    image: fokkodriesprong/docker-druid
+#    ports:
+#      - 8082:8082
+#      - 8888:8888
+#    depends_on:
+#      - kafka
+#    links:
+#      - kafka
+#  superset:
+#    image: fokkodriesprong/docker-superset
+#    ports:
+#      - 8088:8088
+#    links:
+#        - druid

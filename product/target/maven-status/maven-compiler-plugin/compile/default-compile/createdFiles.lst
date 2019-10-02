@@ -1,0 +1,8 @@
+com\gonnect\debezium\kafka\bank\account\dto\Order.class
+com\gonnect\debezium\kafka\bank\account\cqrssink\CqrsReadModel.class
+com\gonnect\debezium\kafka\bank\account\cqrssink\MyProcessor.class
+com\gonnect\debezium\kafka\bank\account\cqrssink\CqrdReadModelUpdater.class
+com\gonnect\debezium\kafka\bank\account\ProductStartupApplication.class
+com\gonnect\debezium\kafka\bank\account\cqrssink\OrderResult.class
+com\gonnect\debezium\kafka\bank\account\cqrssink\OrderCheck.class
+com\gonnect\debezium\kafka\bank\account\model\Product.class
